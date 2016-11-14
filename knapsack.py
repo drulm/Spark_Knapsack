@@ -1,4 +1,3 @@
-
 # Knapsack 0-1 function wieights, values and size n.
 import sys
 import pyspark.sql.functions as func
@@ -12,10 +11,23 @@ from pyspark.sql.functions import col
 def knapsack(knapsackDF, W):
     ratioDF = knapsackDF.withColumn("ratio", lit(knapsackDF.values / knapsackDF.weights))
     ratioDF.sort(col("ratio").desc())
-    partialSumsDF = (ratioDF
-         .map(lambda x: x)
-      )
-    return partialSumsDF
+
+    ratioDF.registerTempTable("test_table")
+    df2 = sqlContext.sql("""
+        SELECT
+            item,
+            weights,
+            values,
+            ratio,
+            sum(ratio) OVER (PARTITION BY item ORDER BY ratio) as cumsum
+        FROM
+        test_table
+        """)
+
+    # partialSumsDF = (ratioDF
+    #     .map(lambda x: x)
+    #  )
+    return df2
 
 
 knapsackData = [('thing1', 1, 2), ('thing2', 2, 3), ('thing3', 4, 5)]
