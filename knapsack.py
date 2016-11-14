@@ -22,7 +22,9 @@ def knapsack(knapsackDF, W):
         FROM
         tempTable
         """)
-    #
+
+    # @TODO: Get the max number of items, greedy less than or equal to W in Spark.
+
     return cumRatioSumDF
 
 
