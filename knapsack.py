@@ -12,21 +12,18 @@ def knapsack(knapsackDF, W):
     ratioDF = knapsackDF.withColumn("ratio", lit(knapsackDF.values / knapsackDF.weights)).sort(col("ratio").desc())
 
     ratioDF.registerTempTable("tempTable")
-    df2 = sqlContext.sql("""
+    cumRatioSumDF = sqlContext.sql("""
         SELECT
             item,
             weights,
             values,
             ratio,
-            sum(ratio) OVER (PARTITION BY item ORDER BY ratio) as cumsum
+            sum(ratio) OVER (ORDER BY ratio) as partSum
         FROM
         tempTable
         """)
-
-    # partialSumsDF = (ratioDF
-    #     .map(lambda x: x)
-    #  )
-    return df2
+    #
+    return cumRatioSumDF
 
 
 # Setup sample data for knapsack.
