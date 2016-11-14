@@ -16,7 +16,7 @@ def knapsack(knapsackDF, W):
 
 knapsackData = [('thing1', 1, 2), ('thing2', 2, 3), ('thing3', 4, 5)]
 knapsackData = sqlContext.createDataFrame(knapsackData, ['item', 'weights', 'values'])
-k = knapsack(knapsackDF, 5)
+k = knapsack(knapsackData, 5)
 print k.take(3)
 
 
