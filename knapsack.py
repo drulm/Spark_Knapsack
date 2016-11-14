@@ -9,10 +9,9 @@ from pyspark.sql.functions import col
 
 # Greedy implementation of 0-1 Knapsack algorithm.
 def knapsack(knapsackDF, W):
-    ratioDF = knapsackDF.withColumn("ratio", lit(knapsackDF.values / knapsackDF.weights))
-    ratioDF.sort(col("ratio").desc())
+    ratioDF = knapsackDF.withColumn("ratio", lit(knapsackDF.values / knapsackDF.weights)).sort(col("ratio").desc())
 
-    ratioDF.registerTempTable("test_table")
+    ratioDF.registerTempTable("tempTable")
     df2 = sqlContext.sql("""
         SELECT
             item,
@@ -21,7 +20,7 @@ def knapsack(knapsackDF, W):
             ratio,
             sum(ratio) OVER (PARTITION BY item ORDER BY ratio) as cumsum
         FROM
-        test_table
+        tempTable
         """)
 
     # partialSumsDF = (ratioDF
@@ -30,9 +29,13 @@ def knapsack(knapsackDF, W):
     return df2
 
 
+# Setup sample data for knapsack.
 knapsackData = [('thing1', 1, 2), ('thing2', 2, 3), ('thing3', 4, 5)]
+# Make a dataframe with item(s), weight(s), and value(s) for the knapsack.
 knapsackData = sqlContext.createDataFrame(knapsackData, ['item', 'weights', 'values'])
-k = knapsack(knapsackData, 5)
+
+# Call the knapsack greedy function, with data and size 5.
+k = knapsack(knapsackData, 5.0)
 print k.take(3)
 
 
