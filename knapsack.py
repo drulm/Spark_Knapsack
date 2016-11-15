@@ -9,42 +9,63 @@ from pyspark.sql.functions import col
 
 
 # Greedy implementation of 0-1 Knapsack algorithm.
-def knapsack(knapsackDF, W):
+def knapsack(knapsackDF, W, N):
     # Add ratio of values / weights column.
-    ratioDF = knapsackDF.withColumn("ratio", lit(knapsackDF.values / knapsackDF.weights)).sort(col("ratio").desc())
+    ratioDF = (knapsackDF.withColumn("ratio", lit(knapsackDF.values / knapsackDF.weights))
+               .filter(col("weights") <= W)
+               .sort(col("ratio").desc())
+               )
+
+    print "ratio of values / weights column"
+    print ratioDF.take(N)
+    print "\n"
 
     # Calculate the partial sums of the ratios.
     ratioDF.registerTempTable("tempTable")
-    RatioPartialSumDF = sqlContext.sql("""
+    partialSumWeightsDF = sqlContext.sql("""
         SELECT
             item,
             weights,
             values,
             ratio,
-            sum(ratio) OVER (ORDER BY ratio) as partSum
+            sum(weights) OVER (ORDER BY ratio desc) as partSumWeights
         FROM
         tempTable
         """)
 
+    print "Calculate the partial sums of the ratios."
+    print partialSumWeightsDF.take(N)
+    print "\n"
+
     # Get the max number of items, greedy less than or equal to W in Spark.
-    RatioPartialSumDF = RatioPartialSumDF.filter(col("partSum") <= W)
-    return RatioPartialSumDF
+    partialSumWeightsFilteredDF = partialSumWeightsDF.sort(col("ratio").desc()).filter(col("partSumWeights") <= W)
+
+    # Return the elemtns
+    return partialSumWeightsFilteredDF
 
 
 # Test the Knapsack function
 
 # Problem size
-N = 10
+N = 5
 
 # Setup sample data for knapsack.
 # knapsackData = [('thing1', 1, 2), ('thing2', 2, 3), ('thing3', 4, 5), ('thing4', 4, 5), ('thing5', 4, 5), ('thing6', 4, 5)]
-knapsackData = [('item_' + str(k), random.randint(1, 100), random.randint(1, 100)) for k in range(N)]
+knapsackData = [('item_' + str(k), random.randint(1, 10), random.randint(1, 10)) for k in range(N)]
 
 # Make a dataframe with item(s), weight(s), and value(s) for the knapsack.
 knapsackData = sqlContext.createDataFrame(knapsackData, ['item', 'weights', 'values'])
+print "Original Data"
+print knapsackData.take(N)
+print "\n"
+
+W = random.randint(N * 2, N * 5)
+print "W = ", W
+print "\n"
 
 # Call the knapsack greedy function, with data and size 5.
-k = knapsack(knapsackData, random.randint(1, 100 * N / 2))
+k = knapsack(knapsackData, W, N)
+print "Selected Elements"
 print k.take(N)
 
 
