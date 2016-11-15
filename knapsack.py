@@ -68,4 +68,7 @@ k = knapsack(knapsackData, W, N)
 print "Selected Elements"
 print k.take(N)
 
+# @TODO
+# Calculate the sum of values.
+
 
