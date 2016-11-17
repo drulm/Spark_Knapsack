@@ -6,19 +6,35 @@ from pyspark.sql.window import Window
 from pyspark.sql import Row
 from pyspark.sql.functions import lit
 from pyspark.sql.functions import col
+from pyspark.sql.functions import sum
 
 
-# Greedy implementation of 0-1 Knapsack algorithm.
-def knapsack(knapsackDF, W, N):
+def knapsack(knapsackDF, W, knapTotals):
+    """
+    Greedy implementation of 0-1 Knapsack algorithm.
+
+    Parameters
+    ----------
+    knapsackDF : Spark Dataframe with knapsack data
+        sqlContext.createDataFrame(knapsackData, ['item', 'weights', 'values'])
+
+    W : float
+        Total weight allowed for knapsack.
+
+    knapTotals : list
+        List of result totals of knapsack values and weights.
+
+    Returns
+    -------
+    Dataframe
+        Dataframe with results.
+    """
+
     # Add ratio of values / weights column.
     ratioDF = (knapsackDF.withColumn("ratio", lit(knapsackDF.values / knapsackDF.weights))
                .filter(col("weights") <= W)
                .sort(col("ratio").desc())
                )
-
-    print "ratio of values / weights column"
-    print ratioDF.take(N)
-    print "\n"
 
     # Calculate the partial sums of the ratios.
     ratioDF.registerTempTable("tempTable")
@@ -33,42 +49,56 @@ def knapsack(knapsackDF, W, N):
         tempTable
         """)
 
-    print "Calculate the partial sums of the ratios."
-    print partialSumWeightsDF.take(N)
-    print "\n"
-
     # Get the max number of items, greedy less than or equal to W in Spark.
     partialSumWeightsFilteredDF = partialSumWeightsDF.sort(col("ratio").desc()).filter(col("partSumWeights") <= W)
 
-    # Return the elemtns
+    knapTotals.append(['Values', partialSumWeightsFilteredDF.select(sum("values")).head()[0]])
+    knapTotals.append(['Weights', partialSumWeightsFilteredDF.select(sum("weights")).head()[0]])
+
+    # Return the elemetns.
     return partialSumWeightsFilteredDF
+    # End of knapsack function
 
 
+# ----------------------------
 # Test the Knapsack function
+# ----------------------------
+# @TODO Split out function code, and test code.
 
 # Problem size
-N = 5
+N = 100
 
 # Setup sample data for knapsack.
-# knapsackData = [('thing1', 1, 2), ('thing2', 2, 3), ('thing3', 4, 5), ('thing4', 4, 5), ('thing5', 4, 5), ('thing6', 4, 5)]
-knapsackData = [('item_' + str(k), random.randint(1, 10), random.randint(1, 10)) for k in range(N)]
+knapsackData = [('item_' + str(k), random.uniform(1.0, 10.0), random.uniform(1.0, 10.0)) for k in range(N)]
 
 # Make a dataframe with item(s), weight(s), and value(s) for the knapsack.
 knapsackData = sqlContext.createDataFrame(knapsackData, ['item', 'weights', 'values'])
-print "Original Data"
+
+# Display the original data
+print "Original Data:"
 print knapsackData.take(N)
 print "\n"
 
-W = random.randint(N * 2, N * 5)
-print "W = ", W
+# Create a random weight
+W = random.uniform(N * 0.3, N * 0.6)
+
+# Show the weight
+print "W: "
+print W
 print "\n"
 
 # Call the knapsack greedy function, with data and size 5.
-k = knapsack(knapsackData, W, N)
-print "Selected Elements"
-print k.take(N)
+knapTotals = []
+k = knapsack(knapsackData, W, knapTotals)
 
-# @TODO
-# Calculate the sum of values.
+# Show the results datafram
+print "Selected Elements:"
+print k.take(N)
+print "\n"
+
+# Show totals for selected elements of knapsack
+print "Totals:"
+print knapTotals
+print "\n"
 
 
