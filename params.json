@@ -1,0 +1,6 @@
+{
+  "name": "Spark knapsack",
+  "tagline": "Data parallel algorithm test on Apache Spark.",
+  "body": "# Spark_Knapsack\r\nData parallel algorithm test on Apache Spark.\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
