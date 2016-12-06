@@ -1,5 +1,5 @@
-""""
-  Copyright 2015 Darrell Ulm
+'''
+Copyright 2016 Darrell Ulm
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -12,8 +12,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-
-""""
+'''
 
 # Knapsack 0-1 function wieights, values and size n.
 import sys
@@ -118,5 +117,4 @@ print "\n"
 print "Totals:"
 print knapTotals
 print "\n"
-
 
