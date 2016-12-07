@@ -7,7 +7,7 @@ from setuptools import find_packages, setup
 
 def setup_package():
     metadata = dict(
-        name='knapsackApprox',
+        name='knapsack',
         version='0.1.0',
         description='Greedy Knapsack Algorithm on PySpark',
         author='Darrell Ulm',
