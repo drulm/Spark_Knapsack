@@ -3,6 +3,9 @@
 # ----------------------------
 # @TODO Split out function code, and test code.
 
+import random
+from approx import knapsack
+
 # Problem size
 N = 10
 
@@ -27,7 +30,7 @@ print "\n"
 
 # Call the knapsack greedy function, with data and size 5.
 knapTotals = []
-k = knapsack(knapsackData, W, knapTotals)
+k = knapsackApprox(knapsackData, W, knapTotals)
 
 # Show the results datafram
 print "Selected Elements:"
