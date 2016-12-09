@@ -31,6 +31,9 @@ def knapsackApprox(sqlContext, knapsackDF, W, knapTotals):
 
     Parameters
     ----------
+    sqlContext : Pass sqlContext for now to handle SQL partial sums reduce
+        for now.
+
     knapsackDF : Spark Dataframe with knapsack data
         sqlContext.createDataFrame(knapsackData, ['item', 'weights', 'values'])
 
