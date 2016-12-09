@@ -18,8 +18,9 @@ Copyright 2016 Darrell Ulm
 from pyspark.sql.functions import lit
 from pyspark.sql.functions import col
 from pyspark.sql.functions import sum
+from pyspark.sql import SparkSession
 
-def knapsackApprox(sc, knapsackDF, W, knapTotals):
+def knapsackApprox(knapsackDF, W, knapTotals):
     """
     Greedy implementation of 0-1 Knapsack algorithm.
 
@@ -48,6 +49,9 @@ def knapsackApprox(sc, knapsackDF, W, knapTotals):
                .filter(col("weights") <= W)
                .sort(col("ratio").desc())
                )
+
+    # Get the current Spark Session.
+    sc = SparkSession.builder.getOrCreate()
 
     # Calculate the partial sums of the ratios.
     ratioDF.registerTempTable("tempTable")
