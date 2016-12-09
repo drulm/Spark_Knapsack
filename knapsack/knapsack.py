@@ -25,7 +25,7 @@ from pyspark.sql.functions import col
 from pyspark.sql.functions import sum
 
 
-def knapsackApprox(sqlContext, knapsackDF, W, knapTotals):
+def knapsackApprox(sc, knapsackDF, W, knapTotals):
     """
     Greedy implementation of 0-1 Knapsack algorithm.
 
@@ -57,7 +57,7 @@ def knapsackApprox(sqlContext, knapsackDF, W, knapTotals):
 
     # Calculate the partial sums of the ratios.
     ratioDF.registerTempTable("tempTable")
-    partialSumWeightsDF = sqlContext.sql("""
+    partialSumWeightsDF = sc.sql("""
         SELECT
             item,
             weights,
