@@ -4,9 +4,11 @@
 # @TODO Split out function code, and test code.
 
 # Pull in the knapsack library.
-import knapsack
+
+
 
 import random
+from knapsack import knapsack
 from pyspark import SparkContext
 from pyspark.sql import SQLContext
 
@@ -38,7 +40,7 @@ print "\n"
 
 # Call the knapsack greedy function, with data and size 5.
 knapTotals = []
-k = knapsack(knapsackData, W, knapTotals)
+k = knapsack.knapsackApprox(knapsackData, W, knapTotals)
 
 # Show the results datafram
 print "Selected Elements:"
@@ -49,4 +51,3 @@ print "\n"
 print "Totals:"
 print knapTotals
 print "\n"
-
