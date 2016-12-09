@@ -14,23 +14,20 @@ Copyright 2016 Darrell Ulm
   limitations under the License.
 '''
 
-# Knapsack 0-1 function wieights, values and size n.
-import sys
-import random
-import pyspark.sql.functions as func
-from pyspark.sql.window import Window
-from pyspark.sql import Row
+# Knapsack 0-1 function weights, values and size n.
 from pyspark.sql.functions import lit
 from pyspark.sql.functions import col
 from pyspark.sql.functions import sum
 
-
-def knapsackApprox(sqlContext, knapsackDF, W, knapTotals):
+def knapsackApprox(sc, knapsackDF, W, knapTotals):
     """
     Greedy implementation of 0-1 Knapsack algorithm.
 
     Parameters
     ----------
+    sqlContext : Pass sqlContext for now to handle SQL partial sums reduce
+        for now.
+
     knapsackDF : Spark Dataframe with knapsack data
         sqlContext.createDataFrame(knapsackData, ['item', 'weights', 'values'])
 
@@ -54,7 +51,7 @@ def knapsackApprox(sqlContext, knapsackDF, W, knapTotals):
 
     # Calculate the partial sums of the ratios.
     ratioDF.registerTempTable("tempTable")
-    partialSumWeightsDF = sqlContext.sql("""
+    partialSumWeightsDF = sc.sql("""
         SELECT
             item,
             weights,
@@ -72,6 +69,6 @@ def knapsackApprox(sqlContext, knapsackDF, W, knapTotals):
     knapTotals.append(['Weights', partialSumWeightsFilteredDF.select(sum("weights")).head()[0]])
     knapTotals.append(['Count', partialSumWeightsFilteredDF.count()])
 
-    # Return the elemetns.
+    # Return the elements.
     return partialSumWeightsFilteredDF
     # End of knapsack function
