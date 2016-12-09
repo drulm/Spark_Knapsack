@@ -14,16 +14,10 @@ Copyright 2016 Darrell Ulm
   limitations under the License.
 '''
 
-# Knapsack 0-1 function wieights, values and size n.
-import sys
-import random
-import pyspark.sql.functions as func
-from pyspark.sql.window import Window
-from pyspark.sql import Row
+# Knapsack 0-1 function weights, values and size n.
 from pyspark.sql.functions import lit
 from pyspark.sql.functions import col
 from pyspark.sql.functions import sum
-
 
 def knapsackApprox(sc, knapsackDF, W, knapTotals):
     """
@@ -75,6 +69,6 @@ def knapsackApprox(sc, knapsackDF, W, knapTotals):
     knapTotals.append(['Weights', partialSumWeightsFilteredDF.select(sum("weights")).head()[0]])
     knapTotals.append(['Count', partialSumWeightsFilteredDF.count()])
 
-    # Return the elemetns.
+    # Return the elements.
     return partialSumWeightsFilteredDF
     # End of knapsack function
