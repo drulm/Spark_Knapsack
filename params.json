@@ -1,6 +1,6 @@
 {
   "name": "Spark knapsack",
   "tagline": "Data parallel algorithm test on Apache Spark.",
-  "body": "# Spark_Knapsack\r\nData parallel algorithm test on Apache Spark.\r\n",
+  "body": "# Spark_Knapsack\r\nData parallel algorithm test on Apache Spark.\r\nDarrell Ulm\r\n\r\ndef knapsackApprox(knapsackDF, W, knapTotals):\r\n\r\n    Greedy implementation of 0-1 Knapsack algorithm.\r\n\r\n    Parameters\r\n    ----------\r\n    knapsackDF : Spark Dataframe with knapsack data\r\n        sqlContext.createDataFrame(knapsackData, ['item', 'weights', 'values'])\r\n\r\n    W : float\r\n        Total weight allowed for knapsack.\r\n\r\n    knapTotals : list\r\n        List of result totals of knapsack values and weights.\r\n\r\n    Returns\r\n    -------\r\n    Dataframe\r\n        Dataframe with results.",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
 }

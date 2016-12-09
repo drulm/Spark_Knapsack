@@ -31,7 +31,29 @@
         <h1>
 <a id="spark_knapsack" class="anchor" href="#spark_knapsack" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Spark_Knapsack</h1>
 
-<p>Data parallel algorithm test on Apache Spark.</p>
+<p>Data parallel algorithm test on Apache Spark.
+Darrell Ulm</p>
+
+<p>def knapsackApprox(knapsackDF, W, knapTotals):</p>
+
+<pre><code>Greedy implementation of 0-1 Knapsack algorithm.
+
+Parameters
+----------
+knapsackDF : Spark Dataframe with knapsack data
+    sqlContext.createDataFrame(knapsackData, ['item', 'weights', 'values'])
+
+W : float
+    Total weight allowed for knapsack.
+
+knapTotals : list
+    List of result totals of knapsack values and weights.
+
+Returns
+-------
+Dataframe
+    Dataframe with results.
+</code></pre>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/drulm">drulm</a></p>
