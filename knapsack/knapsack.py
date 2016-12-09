@@ -25,7 +25,7 @@ from pyspark.sql.functions import col
 from pyspark.sql.functions import sum
 
 
-def knapsackApprox(knapsackDF, W, knapTotals):
+def knapsackApprox(sqlContext, knapsackDF, W, knapTotals):
     """
     Greedy implementation of 0-1 Knapsack algorithm.
 

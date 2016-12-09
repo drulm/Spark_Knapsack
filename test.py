@@ -9,7 +9,7 @@
 
 import random
 from knapsack import knapsack
-from pyspark import SparkContext
+from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext
 
 # Get the SparkContext and sqlContext.
@@ -40,7 +40,7 @@ print "\n"
 
 # Call the knapsack greedy function, with data and size 5.
 knapTotals = []
-k = knapsack.knapsackApprox(knapsackData, W, knapTotals)
+k = knapsack.knapsackApprox(sqlContext, knapsackData, W, knapTotals)
 
 # Show the results datafram
 print "Selected Elements:"
