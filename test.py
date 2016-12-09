@@ -39,7 +39,7 @@ print "\n"
 
 # Call the knapsack greedy approximation function, with data and size 5.
 knapTotals = []
-k = knapsack.knapsackApprox(sc, knapsackData, W, knapTotals)
+k = knapsack.knapsackApprox(knapsackData, W, knapTotals)
 
 # Show the results Dataframe.
 print "Selected Elements:"
