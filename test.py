@@ -3,7 +3,16 @@
 # ----------------------------
 # @TODO Split out function code, and test code.
 
+# Pull in the knapsack library.
+import knapsack
+
 import random
+from pyspark import SparkContext
+from pyspark.sql import SQLContext
+
+# Get the SparkContext and sqlContext.
+sc =SparkContext()
+sqlContext = SQLContext(sc)
 
 # Problem size
 N = 10
