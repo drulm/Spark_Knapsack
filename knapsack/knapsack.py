@@ -14,15 +14,16 @@ Copyright 2016 Darrell Ulm
   limitations under the License.
 '''
 
-# Knapsack 0-1 function weights, values and size n.
+# Knapsack 0-1 function weights, values and size-capacity.
+from pyspark.sql import SparkSession
 from pyspark.sql.functions import lit
 from pyspark.sql.functions import col
 from pyspark.sql.functions import sum
-from pyspark.sql import SparkSession
+
 
 def knapsackApprox(knapsackDF, W, knapTotals):
-    """
-    Greedy implementation of 0-1 Knapsack algorithm.
+    '''
+    A simple greedy parallel implementation of 0-1 Knapsack algorithm.
 
     Parameters
     ----------
@@ -39,8 +40,7 @@ def knapsackApprox(knapsackDF, W, knapTotals):
     -------
     Dataframe
         Dataframe with results.
-    """
-
+    '''
     # Add ratio of values / weights column.
     ratioDF = (knapsackDF.withColumn("ratio", lit(knapsackDF.values / knapsackDF.weights))
                .filter(col("weights") <= W)
@@ -50,7 +50,7 @@ def knapsackApprox(knapsackDF, W, knapTotals):
     # Get the current Spark Session.
     sc = SparkSession.builder.getOrCreate()
 
-    # Calculate the partial sums of the ratios.
+    # An sql method to calculate the partial sums of the ratios.
     ratioDF.registerTempTable("tempTable")
     partialSumWeightsDF = sc.sql("""
         SELECT
@@ -63,13 +63,15 @@ def knapsackApprox(knapsackDF, W, knapTotals):
         tempTable
         """)
 
-    # Get the max number of items, greedy less than or equal to W in Spark.
-    partialSumWeightsFilteredDF = partialSumWeightsDF.sort(col("ratio").desc()).filter(col("partSumWeights") <= W)
+    # Get the max number of items, less than or equal to W in Spark.
+    partialSumWeightsFilteredDF = (
+                                    partialSumWeightsDF.sort(col("ratio").desc())
+                                   .filter(col("partSumWeights") <= W)
+                                   )
 
     knapTotals.append(['Values', partialSumWeightsFilteredDF.select(sum("values")).head()[0]])
     knapTotals.append(['Weights', partialSumWeightsFilteredDF.select(sum("weights")).head()[0]])
     knapTotals.append(['Count', partialSumWeightsFilteredDF.count()])
 
-    # Return the elements.
+    # Return the solution elements with total values, weights and count.
     return partialSumWeightsFilteredDF
-    # End of knapsack function
