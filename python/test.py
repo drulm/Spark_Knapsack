@@ -4,10 +4,10 @@
 
 # Pull in the knapsack library.
 
-from knapsack import knapsack
-
-from pyspark.sql import SparkSession
 import random
+from pyspark.sql import SparkSession
+
+from knapsack import knapsack
 
 # Create the SparkContext.
 sc = SparkSession \
