@@ -1,6 +1,7 @@
 
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
+import org.apache.spark.SparkContext._
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.sum
@@ -46,19 +47,21 @@ See the License for the specific language governing permissions and
   -------
     Dataframe with results.
 */
-def knapsackApprox(spark: SparkSession, knapsackDF: DataFrame, W: Array[Float], knapTotals: List[Any]): DataFrame = {
+class WordCounter(spark: SparkSession) {
 
-  // Add ratio of values / weights column.
-  val ratioDF = (knapsackDF
+  def knapsackApprox(knapsackDF: DataFrame, W: Array[Float], knapTotals: List[Any]): DataFrame = {
+
+    // Add ratio of values / weights column.
+    val ratioDF = (knapsackDF
       .withColumn("ratio", knapsackDF("values") / knapsackDF("weights"))
       .filter(knapsackDF("weights") <= W)
       .sort(knapsackDF("ratio").desc)
-    )
+      )
 
-  // An sql method to calculate the partial sums of the ratios.
-  ratioDF.createOrReplaceTempView("tempTable")
-  val partialSumWeightsDF = spark.sql(
-    """
+    // An sql method to calculate the partial sums of the ratios.
+    ratioDF.createOrReplaceTempView("tempTable")
+    val partialSumWeightsDF = spark.sql(
+      """
       SELECT
           item,
           weights,
@@ -69,17 +72,19 @@ def knapsackApprox(spark: SparkSession, knapsackDF: DataFrame, W: Array[Float], 
       tempTable
       """)
 
-  // Get the max number of items, less than or equal to W in Spark.
-  val partialSumWeightsFilteredDF = (
-    partialSumWeightsDF.sort(partialSumWeightsDF("ratio").desc)
-      .filter(partialSumWeightsDF("partSumWeights") <= W)
-    )
+    // Get the max number of items, less than or equal to W in Spark.
+    val partialSumWeightsFilteredDF = (
+      partialSumWeightsDF.sort(partialSumWeightsDF("ratio").desc)
+        .filter(partialSumWeightsDF("partSumWeights") <= W)
+      )
 
-  val knapTotals = List(List)
-  knapTotals :: List("Values", partialSumWeightsFilteredDF.agg(sum("values")))
-  knapTotals :: List("Weights", partialSumWeightsFilteredDF.agg(sum("weights")))
-  knapTotals :: List("Count", partialSumWeightsFilteredDF.count())
+    val knapTotals = List(List)
+    knapTotals :: List("Values", partialSumWeightsFilteredDF.agg(sum("values")))
+    knapTotals :: List("Weights", partialSumWeightsFilteredDF.agg(sum("weights")))
+    knapTotals :: List("Count", partialSumWeightsFilteredDF.count())
 
-  // Return the solution elements with total values, weights and count.
-  partialSumWeightsFilteredDF
+    // Return the solution elements with total values, weights and count.
+    partialSumWeightsFilteredDF
+  }
+
 }
