@@ -56,10 +56,9 @@ def knapsackApprox(spark: SparkSession, knapsackDF: DataFrame, W: Array[Float], 
   //val sc = new SparkContext(conf)
 
   // Add ratio of values / weights column.
-  val ratioDF = (knapsackDF.withColumn("ratio", knapsackDF("values") / knapsackDF("weights")
+  val ratioDF = (knapsackDF.withColumn("ratio", knapsackDF("values") / knapsackDF("weights"))
       .filter(knapsackDF("weights") <= W)
-      .sort(knapsackDF("ratio")).desc()
-      )
+      .sort(knapsackDF("ratio").desc)
     )
 
   // Get the current Spark Session.
@@ -81,8 +80,8 @@ def knapsackApprox(spark: SparkSession, knapsackDF: DataFrame, W: Array[Float], 
 
   // Get the max number of items, less than or equal to W in Spark.
   val partialSumWeightsFilteredDF = (
-    partialSumWeightsDF.sort(col("ratio").desc())
-      .filter(col("partSumWeights") <= W)
+    partialSumWeightsDF.sort(partialSumWeightsDF("ratio").desc)
+      .filter(partialSumWeightsDF("partSumWeights") <= W)
     )
 
   knapTotals.append([
