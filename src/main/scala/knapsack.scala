@@ -47,7 +47,7 @@ See the License for the specific language governing permissions and
   -------
     Dataframe with results.
 */
-class WordCounter(spark: SparkSession) {
+class knapsack(spark: SparkSession) {
 
   def knapsackApprox(knapsackDF: DataFrame, W: Array[Float], knapTotals: List[Any]): DataFrame = {
 
