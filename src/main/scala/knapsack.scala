@@ -3,12 +3,8 @@ import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.sum
 
-/*
-from pyspark.sql.functions import lit
-from pyspark.sql.functions import col
-from pyspark.sql.functions import sum
-*/
 
 /*
 Copyright 2016 Darrell Ulm
@@ -34,35 +30,30 @@ See the License for the specific language governing permissions and
 
   Parameters
   ----------
+  spark: SparkSession
+    A Spark-Session
+
   knapsackDF : Spark Dataframe with knapsack data
-  sqlContext.createDataFrame(knapsackData, ['item', 'weights', 'values'])
+    sqlContext.createDataFrame(knapsackData, ['item', 'weights', 'values'])
 
   W : float
-  Total weight allowed for knapsack.
+    Total weight allowed for knapsack.
 
   knapTotals : list
-  List of result totals of knapsack values and weights.
+    List of result totals of knapsack values and weights.
 
-  Returns
+  Returns : Dataframe
   -------
-  Dataframe
-  Dataframe with results.
+    Dataframe with results.
 */
-def knapsackApprox(spark: SparkSession, knapsackDF: DataFrame, W: Array[Float], knapTotals: List[List[String]]): DataFrame = {
-
-  // Needed or pass?
-  //val conf = new SparkConf()
-  //conf.setAppName("Knapsack")
-  //val sc = new SparkContext(conf)
+def knapsackApprox(spark: SparkSession, knapsackDF: DataFrame, W: Array[Float], knapTotals: List[Any]): DataFrame = {
 
   // Add ratio of values / weights column.
-  val ratioDF = (knapsackDF.withColumn("ratio", knapsackDF("values") / knapsackDF("weights"))
+  val ratioDF = (knapsackDF
+      .withColumn("ratio", knapsackDF("values") / knapsackDF("weights"))
       .filter(knapsackDF("weights") <= W)
       .sort(knapsackDF("ratio").desc)
     )
-
-  // Get the current Spark Session.
-  // val sc = SparkSession.builder.getOrCreate()
 
   // An sql method to calculate the partial sums of the ratios.
   ratioDF.createOrReplaceTempView("tempTable")
@@ -84,21 +75,11 @@ def knapsackApprox(spark: SparkSession, knapsackDF: DataFrame, W: Array[Float], 
       .filter(partialSumWeightsDF("partSumWeights") <= W)
     )
 
-  knapTotals.append([
-  'Values
-  ', partialSumWeightsFilteredDF.select(sum("values")).head()[
-  0
-  ]] )
-  knapTotals.append([
-  'Weights
-  ', partialSumWeightsFilteredDF.select(sum("weights")).head()[
-  0
-  ]] )
-  knapTotals.append([
-  'Count
-  ', partialSumWeightsFilteredDF.count()
-  ] )
+  val knapTotals = List(List)
+  knapTotals :: List("Values", partialSumWeightsFilteredDF.agg(sum("values")))
+  knapTotals :: List("Weights", partialSumWeightsFilteredDF.agg(sum("weights")))
+  knapTotals :: List("Count", partialSumWeightsFilteredDF.count())
 
   // Return the solution elements with total values, weights and count.
-  return partialSumWeightsFilteredDF
+  partialSumWeightsFilteredDF
 }
