@@ -45,13 +45,13 @@ println(W)
 println("\n")
 
 // Call the knapsack greedy approximation function, with data and size 5.
-val knapTotals = Array()
-//val knapResults = knapsack.knapsackApprox(knapsackData, W, knapTotals)
+val knapTotals = List()
+val knapResults = knapsack.knapsackApprox(knapsackData, W, knapTotals)
 
 // Show the results Dataframe.
-// println("Selected Elements:")
-// println(knapResults.take(N))
-// println("\n")
+println("Selected Elements:")
+println(knapResults.take(N))
+println("\n")
 
 // Show totals for selected elements of knapsack.
 println("Totals:")
