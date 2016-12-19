@@ -1,4 +1,3 @@
-
 // -----------------------------------------------------------------
 //import spark.lib.knapsack
 import org.apache.spark.rdd.RDD
@@ -34,7 +33,7 @@ for(k <- 1 to 10) {
 }
 
 // Make a Dataframe with item(s), weight(s), and value(s) for the knapsack.
-val knapsackData = sc.parallelize(knapsackData).toDF("item", "weights", "values")
+val knapsackData = sc.parallelize(knapsackDataList).toDF("item", "weights", "values")
 
 // Display the original data
 println("Original Data:")
