@@ -1,10 +1,5 @@
-/*
-  --------------------------------------------
-  Test the Approximate Knapsack function test
-  --------------------------------------------
-*/
 
-
+// -----------------------------------------------------------------
 //import spark.lib.knapsack
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkContext, SparkConf}
@@ -17,7 +12,7 @@ import org.apache.spark.mllib.random.RandomRDDs._
 */
 
 // Pull in the knapsack library.
-import spark.lib.knapsack
+// import spark.lib.knapsack
 
 // Create the SparkContext.
 val sc = (SparkSession
@@ -33,8 +28,10 @@ val N = 10
 val r = scala.util.Random
 
 // Setup sample data for knapsack.
-val knapsackDataList = List.iterate(1, N)("item_" ++ str(k), r.nextFloat(10), r.nextFloat(10))
-
+val knapsackDataList = List[(String, Float, Float)]()
+for(k <- 1 to 10) {
+  val knapsackDataList = knapsackDataList :+ ("item_" ++ str(k), r.nextFloat(10), r.nextFloat(10))
+}
 
 // Make a Dataframe with item(s), weight(s), and value(s) for the knapsack.
 val knapsackData = sc.parallelize(knapsackData).toDF("item", "weights", "values")
@@ -69,3 +66,4 @@ println("\n")
 // ------------------------------------------
 // End of Approximate Knapsack function test
 // ------------------------------------------
+
