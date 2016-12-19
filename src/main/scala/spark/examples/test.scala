@@ -20,11 +20,11 @@ val N = 10
 val r = scala.util.Random
 
 // Setup sample data for knapsack.
-val knapsackDataList = new ListBuffer[(String, Float, Float)]()
-for(k <- 1 to 10) {
-  val knapsackDataList += ("item_" ++ str(k), r.nextFloat(10), r.nextFloat(10))
+val knapsackDataListBuffer = ListBuffer[(String, Double, Double)]()
+for (k <- 1 to N) {
+  knapsackDataListBuffer += (("item_" + k.toString, r.nextDouble() * 10.0, r.nextDouble() * 10.0))
 }
-val knapsackData = knapsackDataList.toList
+val knapsackDataList = knapsackDataListBuffer.toList
 
 // Make a Dataframe with item(s), weight(s), and value(s) for the knapsack.
 val knapsackData = sc.parallelize(knapsackDataList).toDF("item", "weights", "values")
@@ -37,7 +37,7 @@ println("\n")
 // Create a random maximum weight
 val start = N * 0.3
 val end = N * 0.6
-val W = (math.random * (end - start) + start);
+val W = (math.random * (end - start) + start)
 
 // Show the weight.
 println("W: ")
