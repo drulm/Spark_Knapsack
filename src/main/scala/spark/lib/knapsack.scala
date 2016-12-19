@@ -49,7 +49,7 @@ See the License for the specific language governing permissions and
 */
 class knapsack(spark: SparkSession) {
 
-  def knapsackApprox(knapsackDF: DataFrame, W: Array[Float], knapTotals: List[Any]): DataFrame = {
+  def knapsackApprox(knapsackDF: DataFrame, W: Double, knapTotals: List[Any]): DataFrame = {
 
     // Add ratio of values / weights column.
     val ratioDF = (knapsackDF
