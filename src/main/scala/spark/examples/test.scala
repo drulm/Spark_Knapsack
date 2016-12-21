@@ -31,7 +31,7 @@ val knapsackData = sc.parallelize(knapsackDataList).toDF("item", "weights", "val
 
 // Display the original data
 println("Original Data:")
-println(knapsackData.take(N))
+knapsackData.show()
 println("\n")
 
 // Create a random maximum weight
@@ -50,7 +50,7 @@ val knapResults = knapsack.knapsackApprox(knapsackData, W, knapTotals)
 
 // Show the results Dataframe.
 println("Selected Elements:")
-println(knapResults.take(N))
+knapResults.show()
 println("\n")
 
 // Show totals for selected elements of knapsack.
