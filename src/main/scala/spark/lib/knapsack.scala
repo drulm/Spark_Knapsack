@@ -53,25 +53,16 @@ object knapsack {
   def knapsackApprox(knapsackDF: DataFrame, W: Double, knapTotals: List[Any]): DataFrame = {
 
     // Add ratio of values / weights column.
-    val ratioDF = knapsackDF.withColumn("ratio", knapsackDF("values") / knapsackDF("weights")
-      ratioDF = (knapsackDF
-      .filter(knapsackDF("weights") <= W)
-      .sort(knapsackDF("ratio").desc)
+    val ratioDF = knapsackDF.withColumn("ratio", knapsackDF("values") / knapsackDF("weights"))
+    val newRatioDF = (ratioDF
+      .filter(ratioDF("weights") <= W)
+      .sort(ratioDF("ratio").desc)
       )
 
-      // An sql method to calculate the partial sums of the ratios.
-      ratioDF.createOrReplaceTempView("tempTable")
-    val partialSumWeightsDF = spark.sql(
-      """
-      SELECT
-          item,
-          weights,
-          values,
-          ratio,
-          sum(weights) OVER (ORDER BY ratio desc) as partSumWeights
-      FROM
-      tempTable
-      """)
+    // An sql method to calculate the partial sums of the ratios.
+    newRatioDF.createOrReplaceTempView("tempTable")
+
+    val partialSumWeightsDF = spark.sql("SELECT item, weights, values, ratio, sum(weights) OVER (ORDER BY ratio desc) as partSumWeights FROM tempTable")
 
     // Get the max number of items, less than or equal to W in Spark.
     val partialSumWeightsFilteredDF = (
