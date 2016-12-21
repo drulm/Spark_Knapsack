@@ -1,12 +1,3 @@
-
-import org.apache.spark.SparkConf
-import org.apache.spark.SparkContext
-import org.apache.spark.SparkContext._
-import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions.sum
-
-
 /*
 Copyright 2016 Darrell Ulm
 
@@ -22,9 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
   limitations under the License.
 */
-
-// Knapsack 0-1 function weights, values and size-capacity.
-
+import org.apache.spark._
+import org.apache.spark.rdd.RDD
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext._
+import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.sum
 
 /*
   A simple greedy parallel implementation of 0-1 Knapsack algorithm.
@@ -47,34 +42,26 @@ See the License for the specific language governing permissions and
   -------
     Dataframe with results.
 */
-class knapsack(spark: SparkSession) {
+object knapsack {
 
   def knapsackApprox(knapsackDF: DataFrame, W: Double, knapTotals: List[Any]): DataFrame = {
 
     // Add ratio of values / weights column.
-    val ratioDF = (knapsackDF
-      .withColumn("ratio", knapsackDF("values") / knapsackDF("weights"))
-      .filter(knapsackDF("weights") <= W)
-      .sort(knapsackDF("ratio").desc)
+    val ratioDF = knapsackDF.withColumn("ratio", knapsackDF("values") / knapsackDF("weights"))
+    val newRatioDF = (ratioDF
+      .filter(ratioDF("weights") <= W)
+      .sort(ratioDF("ratio").desc)
       )
 
     // An sql method to calculate the partial sums of the ratios.
-    ratioDF.createOrReplaceTempView("tempTable")
-    val partialSumWeightsDF = spark.sql(
-      """
-      SELECT
-          item,
-          weights,
-          values,
-          ratio,
-          sum(weights) OVER (ORDER BY ratio desc) as partSumWeights
-      FROM
-      tempTable
-      """)
+    newRatioDF.createOrReplaceTempView("tempTable")
+
+    val partialSumWeightsDF = spark.sql("SELECT item, weights, values, ratio, sum(weights) OVER (ORDER BY ratio desc) as partSumWeights FROM tempTable")
 
     // Get the max number of items, less than or equal to W in Spark.
     val partialSumWeightsFilteredDF = (
-      partialSumWeightsDF.sort(partialSumWeightsDF("ratio").desc)
+      partialSumWeightsDF
+        // partialSumWeightsDF.sort(partialSumWeightsDF("ratio").desc)
         .filter(partialSumWeightsDF("partSumWeights") <= W)
       )
 
@@ -88,3 +75,4 @@ class knapsack(spark: SparkSession) {
   }
 
 }
+
