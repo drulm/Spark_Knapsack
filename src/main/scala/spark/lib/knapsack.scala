@@ -44,7 +44,7 @@ import org.apache.spark.sql.functions.sum
 */
 object knapsack {
 
-  def knapsackApprox(knapsackDF: DataFrame, W: Double, knapTotals: List[Any]): DataFrame = {
+  def knapsackApprox(knapsackDF: DataFrame, W: Double): DataFrame = {
 
     // Add ratio of values / weights column.
     val ratioDF = knapsackDF.withColumn("ratio", knapsackDF("values") / knapsackDF("weights"))
@@ -65,13 +65,8 @@ object knapsack {
         .filter(partialSumWeightsDF("partSumWeights") <= W)
       )
 
-    val knapTotals = List(List)
-    knapTotals :: List("Values", partialSumWeightsFilteredDF.agg(sum("values")))
-    knapTotals :: List("Weights", partialSumWeightsFilteredDF.agg(sum("weights")))
-    knapTotals :: List("Count", partialSumWeightsFilteredDF.count())
-
     // Return the solution elements with total values, weights and count.
-    partialSumWeightsFilteredDF
+    partialSumWeightsDF
   }
 
 }

@@ -32,7 +32,7 @@ val knapsackData = sc.parallelize(knapsackDataList).toDF("item", "weights", "val
 // Display the original data
 println("Original Data:")
 knapsackData.show()
-println("\n")
+println("\r\n")
 
 // Create a random maximum weight
 val start = N * 0.3
@@ -42,21 +42,31 @@ val W = (math.random * (end - start) + start)
 // Show the weight.
 println("W: ")
 println(W)
-println("\n")
+println("\r\n")
 
 // Call the knapsack greedy approximation function, with data and size 5.
-val knapTotals = List()
-val knapResults = knapsack.knapsackApprox(knapsackData, W, knapTotals)
+val knapResults = knapsack.knapsackApprox(knapsackData, W)
 
 // Show the results Dataframe.
 println("Selected Elements:")
 knapResults.show()
-println("\n")
+println("\r\n")
+
+// Find the totals.
+val valuesResult = knapResults.agg(sum("values"))
+val weightsResult = knapResults.agg(sum("weights"))
+val countResult = knapResults.count()
 
 // Show totals for selected elements of knapsack.
-println("Totals:")
-println(knapTotals)
-println("\n")
+println("Value Total:")
+valuesResult.show()
+println("\r\n")
+println("Weights Total:")
+weightsResult.show()
+println("\r\n")
+println("Count:")
+println(countResult)
+println("\r\n")
 
 // ------------------------------------------
 // End of Approximate Knapsack function test
