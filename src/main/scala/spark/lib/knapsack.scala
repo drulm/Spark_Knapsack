@@ -1,13 +1,3 @@
-
-import org.apache.spark._
-import org.apache.spark.rdd.RDD
-import org.apache.spark.SparkConf
-import org.apache.spark.SparkContext._
-import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions.sum
-
-
 /*
 Copyright 2016 Darrell Ulm
 
@@ -23,9 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
   limitations under the License.
 */
-
-// Knapsack 0-1 function weights, values and size-capacity.
-
+import org.apache.spark._
+import org.apache.spark.rdd.RDD
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext._
+import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.sum
 
 /*
   A simple greedy parallel implementation of 0-1 Knapsack algorithm.
