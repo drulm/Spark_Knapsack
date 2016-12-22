@@ -30,7 +30,7 @@ print knapsackData.show()
 print "\n"
 
 # Create a random maximum weight
-W = random.uniform(N * 0.3, N * 0.6)
+W = random.uniform(N * 1.3, N * 1.6)
 
 # Show the weight.
 print "W: "
@@ -46,12 +46,12 @@ print k.show()
 print "\n"
 
 # Show totals for selected elements of knapsack.
-sumValues = k.select(sum("values")).head()[0]
-sumWeights = k.select(sum("weights")).head()[0]
+#sumValues = k.select(sum("values")).head()[0]
+#sumWeights = k.select(sum("weights")).head()[0]
 numResults = k.count()
 print "Totals:"
-print sumValues
-print sumWeights
+#print sumValues
+#print sumWeights
 print numResults
 print "\n"
 

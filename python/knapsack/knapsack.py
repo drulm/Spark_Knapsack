@@ -63,7 +63,7 @@ def knapsackApprox(knapsackDF, W):
     # Get the max number of items, less than or equal to W in Spark.
     partialSumWeightsFilteredDF = (
                                     partialSumWeightsDF.sort(col("ratio").desc())
-                                   .filter(col("partSumWeights") <= W)
+                                    .filter(col("partSumWeights") <= W)
                                    )
 
     # Return the solution elements with total values, weights and count.
