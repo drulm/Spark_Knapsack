@@ -26,11 +26,11 @@ knapsackData = sc.createDataFrame(knapsackData, ['item', 'weights', 'values'])
 
 # Display the original data
 print "Original Data:"
-print knapsackData.take(N)
+print knapsackData.show()
 print "\n"
 
 # Create a random maximum weight
-W = random.uniform(N * 0.3, N * 0.6)
+W = random.uniform(N * 1.3, N * 1.6)
 
 # Show the weight.
 print "W: "
@@ -38,17 +38,21 @@ print W
 print "\n"
 
 # Call the knapsack greedy approximation function, with data and size 5.
-knapTotals = []
-k = knapsack.knapsackApprox(knapsackData, W, knapTotals)
+k = knapsack.knapsackApprox(knapsackData, W)
 
 # Show the results Dataframe.
 print "Selected Elements:"
-print k.take(N)
+print k.show()
 print "\n"
 
 # Show totals for selected elements of knapsack.
+#sumValues = k.select(sum("values")).head()[0]
+#sumWeights = k.select(sum("weights")).head()[0]
+numResults = k.count()
 print "Totals:"
-print knapTotals
+#print sumValues
+#print sumWeights
+print numResults
 print "\n"
 
 # ------------------------------------------

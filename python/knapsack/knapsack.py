@@ -21,7 +21,7 @@ from pyspark.sql.functions import col
 from pyspark.sql.functions import sum
 
 
-def knapsackApprox(knapsackDF, W, knapTotals):
+def knapsackApprox(knapsackDF, W):
     '''
     A simple greedy parallel implementation of 0-1 Knapsack algorithm.
 
@@ -32,9 +32,6 @@ def knapsackApprox(knapsackDF, W, knapTotals):
 
     W : float
         Total weight allowed for knapsack.
-
-    knapTotals : list
-        List of result totals of knapsack values and weights.
 
     Returns
     -------
@@ -66,12 +63,8 @@ def knapsackApprox(knapsackDF, W, knapTotals):
     # Get the max number of items, less than or equal to W in Spark.
     partialSumWeightsFilteredDF = (
                                     partialSumWeightsDF.sort(col("ratio").desc())
-                                   .filter(col("partSumWeights") <= W)
+                                    .filter(col("partSumWeights") <= W)
                                    )
-
-    knapTotals.append(['Values', partialSumWeightsFilteredDF.select(sum("values")).head()[0]])
-    knapTotals.append(['Weights', partialSumWeightsFilteredDF.select(sum("weights")).head()[0]])
-    knapTotals.append(['Count', partialSumWeightsFilteredDF.count()])
 
     # Return the solution elements with total values, weights and count.
     return partialSumWeightsFilteredDF
