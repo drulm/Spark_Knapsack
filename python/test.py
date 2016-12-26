@@ -46,12 +46,12 @@ print k.show()
 print "\n"
 
 # Show totals for selected elements of knapsack.
-#sumValues = k.select(sum("values")).head()[0]
-#sumWeights = k.select(sum("weights")).head()[0]
+sumValues = k.rdd.map(lambda x: x["values"]).reduce(lambda x, y: x+y)
+sumWeights = k.rdd.map(lambda x: x["weights"]).reduce(lambda x, y: x+y)
 numResults = k.count()
 print "Totals:"
-#print sumValues
-#print sumWeights
+print "Sum Values: ",  sumValues
+print "Sum Weights: ",  sumWeights
 print numResults
 print "\n"
 
