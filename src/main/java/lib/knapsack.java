@@ -1,6 +1,5 @@
-package com.github.drulm.Spark_Knapsack
+package com.github.drulm.Spark_Knapsack;
 
-import org.apache.spark;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
